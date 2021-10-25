@@ -6,6 +6,6 @@ import java.math.BigDecimal
 
 
 @Getter
-data class Extract(val userId:String ,val money:BigDecimal) {
+data class Extract(val userId:String ,val balance:BigDecimal) {
 
 }

@@ -23,7 +23,7 @@ class ExtractRestcontroller(val userClient : UserClient){
             interval = 5000L
             //TODO map the error
         }
-        return Flux.interval(Duration.ofSeconds(interval)).map {ExtractResponse(userId, user.money)  }
+        return Flux.interval(Duration.ofSeconds(interval)).map {ExtractResponse(userId, user.balance)  }
 
     }
 }
