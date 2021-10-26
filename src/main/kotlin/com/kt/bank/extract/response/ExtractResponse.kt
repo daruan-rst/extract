@@ -5,12 +5,12 @@ import com.kt.bank.extract.domain.Extract
 import java.math.BigDecimal
 
 
-data class ExtractResponse(var userId : String , var balance : BigDecimal) {
+data class ExtractResponse(var accountId : String, var balance : BigDecimal) {
 
 
     fun ExtractResponse(extract : Extract){
-        this.userId = extract.userId
-        this.balance = extract.balance
+        this.accountId = extract.accountId
+        this.balance = extract.money
     }
 
 

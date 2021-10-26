@@ -1,7 +1,6 @@
 package com.kt.bank.extract.controller
 
-import com.kt.bank.extract.client.UserClient
-import com.kt.bank.extract.domain.Extract
+import com.kt.bank.extract.client.AccountClient
 import com.kt.bank.extract.response.ExtractResponse
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -11,12 +10,12 @@ import java.time.Duration
 
 @RestController
 @RequestMapping("/extract")
-class ExtractRestcontroller(val userClient : UserClient){
+class ExtractRestcontroller(val accountClient : AccountClient){
 
 
     @GetMapping
     fun extract(userId :String ) : Flux<ExtractResponse>{
-        val user = userClient.findByUserId(userId)
+        val user = accountClient.findByUserId(userId)
         var interval : Long = 1L
         var errorOccured : Boolean = false
         if(errorOccured){

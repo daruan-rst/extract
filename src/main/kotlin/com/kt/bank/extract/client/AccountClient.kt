@@ -7,10 +7,10 @@ import org.springframework.cloud.openfeign.FeignClient
 
 
 @FeignClient(value="users", url="http://localhost:8080") // TODO colocar a url final do sistema de usuários
-interface UserClient {
+interface AccountClient {
 
-    @RequestMapping(value = ["/user/find-by-user-id/"], method = [RequestMethod.GET])
-    fun findByUserId(@RequestParam userId: String) : User
+    @RequestMapping(value = ["/account/find-by-id/"], method = [RequestMethod.GET])
+    fun findByUserId(@RequestParam userId: String) : Account
 
     //TODO o método acima é um placeholder -> deve ser substituido pelo método findById que for criado no microsserviço de criar contas
 }
