@@ -6,14 +6,9 @@ import javax.persistence.*
 
 @Entity
 @Table
-class Operation {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: String = ""
-    var accountId: String = ""
-    var money: BigDecimal = BigDecimal.ZERO
-    var operationType: OperationType = OperationType.BLANK
-    var operationStatus: OperationStatus = OperationStatus.BLANK
-    var date: LocalDateTime = LocalDateTime.now()
-}
+data class Operation(@Id @GeneratedValue(strategy = GenerationType.AUTO) val id: String ="",
+                     val accountId: String = "",
+                     val money: BigDecimal = BigDecimal.ZERO,
+                     val operationType: OperationType = OperationType.BLANK,
+                     val operationStatus: OperationStatus = OperationStatus.BLANK,
+                     val date: LocalDateTime = LocalDateTime.now())

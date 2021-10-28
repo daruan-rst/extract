@@ -17,7 +17,7 @@ class OperationRestController (private val operationService: OperationService) {
                 , uriComponentsBuilder : UriComponentsBuilder)
     : ResponseEntity<Operation> {
         val operation = operationService.deposit(accountId, money)
-        var uri = uriComponentsBuilder.path("/operation/{id}")
+        val uri = uriComponentsBuilder.path("/operation/{id}")
             .buildAndExpand(operation.id).toUri()
         return ResponseEntity.created(uri).body(operation)
     }
@@ -27,7 +27,7 @@ class OperationRestController (private val operationService: OperationService) {
         uriComponentsBuilder : UriComponentsBuilder)
             : ResponseEntity<Operation> {
         val operation = operationService.withdraw(accountId, money)
-        var uri = uriComponentsBuilder.path("/operation/{id}")
+        val uri = uriComponentsBuilder.path("/operation/{id}")
             .buildAndExpand(operation.id).toUri()
         return ResponseEntity.created(uri).body(operation)
     }
