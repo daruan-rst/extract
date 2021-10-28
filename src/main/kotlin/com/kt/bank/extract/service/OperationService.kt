@@ -1,10 +1,11 @@
 package com.kt.bank.extract.service
 
+import com.kt.bank.extract.client.AccountClient
 import com.kt.bank.extract.domain.Extract
 import com.kt.bank.extract.domain.Operation
 import com.kt.bank.extract.domain.OperationStatus
 import com.kt.bank.extract.domain.OperationType
-import com.kt.bank.extract.exception.OperationException
+import com.kt.bank.extract.exception.InvalidAccountException
 import com.kt.bank.extract.repository.ExtractRepository
 import com.kt.bank.extract.repository.OperationRepository
 import org.springframework.stereotype.Service
@@ -12,18 +13,22 @@ import java.math.BigDecimal
 
 @Service
 class OperationService(private val operationRepository: OperationRepository,
-                       private val extractRepository: ExtractRepository) {
+                       private val extractRepository: ExtractRepository,
+                       private val accountClient : AccountClient
+) {
 
     private fun newOperation(accountId: String, operationType: OperationType, money: BigDecimal): Operation {
         val operation = Operation()
-        operation.operationType = operationType
         operation.money = money
-        operation.accountId = accountId
         try {
             //TODO verify connection, add a circuit breaker or something that would actually break this sh!t
+            accountClient.findById(accountId)
+            operation.accountId = accountId
+            operation.operationType = operationType
             operation.operationStatus = OperationStatus.OK
-        } catch (e: OperationException) {
+        } catch (e: InvalidAccountException) {
             operation.operationStatus = OperationStatus.ERROR
+            operation.operationType = OperationType.BLANK
         } finally {
             return operation
         }

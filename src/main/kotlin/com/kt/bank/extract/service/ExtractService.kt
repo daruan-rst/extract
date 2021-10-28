@@ -1,25 +1,42 @@
 package com.kt.bank.extract.service
 
 import com.kt.bank.extract.client.Account
+import com.kt.bank.extract.client.AccountClient
 import com.kt.bank.extract.domain.Extract
 import com.kt.bank.extract.exception.DuplicateAccountIdException
+import com.kt.bank.extract.exception.InvalidAccountException
 import com.kt.bank.extract.repository.ExtractRepository
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
 @Service
-class ExtractService(val extractRepository : ExtractRepository) {
+class ExtractService(val extractRepository : ExtractRepository, val accountClient : AccountClient) {
 
     fun findExtractById(accountId: String) : Extract {
-        return extractRepository.findById(accountId).get()
+        var extract = Extract()
+        try {
+            accountClient.findById(accountId) // this is where some shit could go wrong
+            extract =  extractRepository.findById(accountId).get()
+        } catch (e: InvalidAccountException){
+            extract.accountId = "INVALID"
+            extract.money = BigDecimal.ZERO
+        }finally {
+            return extract
+        }
     }
 
     fun convert(account: Extract): String {
-
         var box = "╔"
-        val message = """
-                        ║O saldo da sua conta ${account.accountId} é de R${"$"}${account.money}║
-                        ╚"""
+        var message = ""
+        message = if (account.accountId.equals("INVALID")){
+            """
+                            ║          ERROR        ║
+                            ╚"""
+        }else {
+            """
+                            ║O saldo da sua conta ${account.accountId} é de R${"$"}${account.money}║
+                            ╚"""
+        }
         val messageLength = message.length
         for (i in 0..messageLength - 5) {
             val component = if (i != messageLength - 5) "═" else "╗"
@@ -45,4 +62,3 @@ class ExtractService(val extractRepository : ExtractRepository) {
 
         }
 
-}

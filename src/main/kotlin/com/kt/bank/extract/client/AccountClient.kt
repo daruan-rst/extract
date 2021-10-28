@@ -10,7 +10,7 @@ import org.springframework.cloud.openfeign.FeignClient
 interface AccountClient {
 
     @RequestMapping(value = ["/account/find-by-id/"], method = [RequestMethod.GET])
-    fun findByUserId(@RequestParam userId: String) : Account
+    fun findById(@RequestParam accountId: String) : Account
 
     //TODO o método acima é um placeholder -> deve ser substituido pelo método findById que for criado no microsserviço de criar contas
 }
