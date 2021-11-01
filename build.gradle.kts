@@ -28,6 +28,9 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
     runtimeOnly ("org.postgresql:postgresql")
+//    implementation ("org.springdoc:springdoc-openapi-ui:1.5.12")
+    implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
+    runtimeOnly("com.microsoft.sqlserver:mssql-jdbc")
 }
 
 tasks.withType<KotlinCompile> {

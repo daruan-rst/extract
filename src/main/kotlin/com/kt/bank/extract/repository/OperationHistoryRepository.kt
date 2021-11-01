@@ -1,9 +1,9 @@
 package com.kt.bank.extract.repository
 
-import com.kt.bank.extract.domain.Operation
+import com.kt.bank.extract.domain.OperationHistory
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface OperationRepository : JpaRepository<Operation, String> {
+interface OperationHistoryRepository: JpaRepository <OperationHistory, String> {
 }

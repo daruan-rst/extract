@@ -2,19 +2,20 @@ package com.kt.bank.extract.domain
 
 import java.math.BigDecimal
 import java.time.LocalDateTime
-import javax.persistence.*
+import javax.persistence.Entity
+import javax.persistence.Id
 
 @Entity
-@Table
-class Operation {
+class OperationHistory {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: String = ""
+    var operationId: String = ""
     var accountId: String = ""
     var money: BigDecimal = BigDecimal.ZERO
     var operationType: OperationType = OperationType.BLANK
     var operationStatus: OperationStatus = OperationStatus.BLANK
     var date: LocalDateTime = LocalDateTime.now()
     var message: String = ""
+    var confirmationDate: LocalDateTime = LocalDateTime.now()
+
 }
