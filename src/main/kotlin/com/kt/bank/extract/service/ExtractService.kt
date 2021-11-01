@@ -6,6 +6,7 @@ import com.kt.bank.extract.domain.Extract
 import com.kt.bank.extract.exception.DuplicateAccountIdException
 import com.kt.bank.extract.exception.InvalidAccountException
 import com.kt.bank.extract.repository.ExtractRepository
+import feign.FeignException
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
@@ -16,14 +17,12 @@ class ExtractService(val extractRepository : ExtractRepository, val accountClien
         var extract = Extract()
         try {
             accountClient.findById(accountId) // this is where some shit could go wrong
-            extract =  extractRepository.findById(accountId).get()
-        } catch (e: InvalidAccountException){
-            extract.accountId = "INVALID"
-            extract.money = BigDecimal.ZERO
-        }finally {
-            return extract
+            return extractRepository.findById(accountId).get()
+        } catch (e: FeignException){
+            return extract.copy(accountId = "INVALID", money = BigDecimal.ZERO)
         }
     }
+
 
     fun convert(account: Extract): String {
         var box = "╔"
@@ -50,9 +49,7 @@ class ExtractService(val extractRepository : ExtractRepository, val accountClien
         return box }
 
         public fun newExtract (accountId: String , money:BigDecimal):Extract {
-            val extract = Extract()
-            extract.accountId = accountId
-            extract.money = money
+            val extract = Extract(accountId, money)
             if(extractRepository.findById(accountId).isPresent){
                 throw DuplicateAccountIdException()
                 }
