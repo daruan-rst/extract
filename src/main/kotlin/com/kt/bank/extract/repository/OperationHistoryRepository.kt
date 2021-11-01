@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface OperationHistoryRepository: JpaRepository <OperationHistory, String> {
+
+    fun findByAccountId(accountId: String):List<OperationHistory>
 }

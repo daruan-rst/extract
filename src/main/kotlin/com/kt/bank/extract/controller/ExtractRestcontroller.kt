@@ -2,6 +2,7 @@ package com.kt.bank.extract.controller
 
 import com.kt.bank.extract.client.AccountClient
 import com.kt.bank.extract.domain.Extract
+import com.kt.bank.extract.domain.OperationHistory
 import com.kt.bank.extract.service.ExtractService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -18,18 +19,16 @@ class ExtractRestcontroller(val accountClient : AccountClient, val extractServic
 
 
     @GetMapping
-    fun extract(accountId :String ) : Flux<String>{
-        val user = extractService.findExtractById(accountId)
-        var interval : Long = 1L
-        var errorOccured : Boolean = false
-        if(errorOccured){
-            interval = 5000L
-            //TODO map the error
-        }
-        return Flux.interval(Duration.ofSeconds(interval)).map {extractService.convert(user)  }
+    fun extract(accountId :String ) : ResponseEntity<Extract> {
+        return extractService.findExtractById(accountId)
     }
 
     @PostMapping("/new-extract")
     fun createExtract(accountId: String , money : BigDecimal) : ResponseEntity<Extract>{
-        return ResponseEntity.ok(extractService.newExtract(accountId, money))}
+        return extractService.newExtract(accountId, money)}
+
+    @GetMapping("/extractHistory")
+    fun extractHistory(accountId: String) :ResponseEntity<List<OperationHistory>>{
+        return extractService.findExtractHistoryByAccountId(accountId)
+    }
 }

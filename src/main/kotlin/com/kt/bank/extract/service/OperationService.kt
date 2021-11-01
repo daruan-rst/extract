@@ -40,7 +40,7 @@ class OperationService(private val operationRepository: OperationRepository,
         }
     }
 
-    public fun deposit(accountId: String, depositMoney: BigDecimal): ResponseEntity<Operation> {
+    fun deposit(accountId: String, depositMoney: BigDecimal): ResponseEntity<Operation> {
         var extract = extractRepository.findById(accountId).orElse(null)
         val deposit = newOperation(accountId, OperationType.DEPOSIT, depositMoney)
         if(extract == null){
@@ -54,7 +54,7 @@ class OperationService(private val operationRepository: OperationRepository,
         return ResponseEntity.status(HttpStatus.OK).body(deposit)
     }
 
-    public fun withdraw(accountId: String, withdrawMoney: BigDecimal): ResponseEntity<Operation> {
+    fun withdraw(accountId: String, withdrawMoney: BigDecimal): ResponseEntity<Operation> {
         var withdrawMoney = withdrawMoney.negate()
         val withdraw = newOperation(accountId, OperationType.WITHDRAW, withdrawMoney)
         var extract = extractRepository.findById(accountId).orElse(null)

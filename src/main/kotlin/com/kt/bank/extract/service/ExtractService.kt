@@ -3,24 +3,26 @@ package com.kt.bank.extract.service
 import com.kt.bank.extract.client.Account
 import com.kt.bank.extract.client.AccountClient
 import com.kt.bank.extract.domain.Extract
+import com.kt.bank.extract.domain.OperationHistory
 import com.kt.bank.extract.exception.DuplicateAccountIdException
 import com.kt.bank.extract.exception.InvalidAccountException
 import com.kt.bank.extract.repository.ExtractRepository
+import com.kt.bank.extract.repository.OperationHistoryRepository
 import feign.FeignException
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
 @Service
-class ExtractService(val extractRepository : ExtractRepository, val accountClient : AccountClient) {
+class ExtractService(val extractRepository : ExtractRepository, val accountClient : AccountClient, val operationHistoryRepository: OperationHistoryRepository) {
 
-    fun findExtractById(accountId: String) : Extract {
-        var extract = Extract()
-        try {
-            accountClient.findById(accountId) // this is where some shit could go wrong
-            return extractRepository.findById(accountId).get()
-        } catch (e: FeignException){
-            return extract.copy(accountId = "INVALID", money = BigDecimal.ZERO)
+    fun findExtractById(accountId: String) : ResponseEntity<Extract> {
+        val extract = extractRepository.findById(accountId).orElse(null)
+        if(extract == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null)
         }
+        return ResponseEntity.ok().body(extract)
     }
 
 
@@ -48,14 +50,21 @@ class ExtractService(val extractRepository : ExtractRepository, val accountClien
         }
         return box }
 
-        public fun newExtract (accountId: String , money:BigDecimal):Extract {
+        fun newExtract (accountId: String , money:BigDecimal): ResponseEntity<Extract> {
             val extract = Extract(accountId, money)
             if(extractRepository.findById(accountId).isPresent){
-                throw DuplicateAccountIdException()
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null)
                 }
             extractRepository.save(extract)
-            return extract
+            return ResponseEntity.status(HttpStatus.CREATED).body(extract)
             }
 
+    fun findExtractHistoryByAccountId(accountId: String): ResponseEntity<List<OperationHistory>> {
+        var operationHistoryList = operationHistoryRepository.findByAccountId(accountId)
+        if (operationHistoryList.isEmpty() ){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null)
         }
+        return ResponseEntity.status(HttpStatus.OK).body(operationHistoryList)
+    }
+}
 
