@@ -7,4 +7,4 @@ import javax.persistence.*
 
 @Entity
 @Table
-data class Extract(@Id val accountId:String = "", val money:BigDecimal = BigDecimal.ZERO)
+data class Extract(@Id val accountId:String = "", var money:BigDecimal = BigDecimal.ZERO)

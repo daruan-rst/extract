@@ -32,16 +32,4 @@ class ExtractRestcontroller(val accountClient : AccountClient, val extractServic
     @PostMapping("/new-extract")
     fun createExtract(accountId: String , money : BigDecimal) : ResponseEntity<Extract>{
         return ResponseEntity.ok(extractService.newExtract(accountId, money))}
-
-}
-
-
-data class Person (val name:String, val age: Int)
-
-val person: Person = Person("desiree", 54)
-
-val person2: Person = Person("teste", 20)
-
-fun main(){
-    println("$person /n $person2")
 }
