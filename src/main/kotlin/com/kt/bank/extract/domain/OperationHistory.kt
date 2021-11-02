@@ -10,7 +10,7 @@ import javax.persistence.Table
 @Table
 class OperationHistory {
     @Id
-    var operationId: String = ""
+    var operationId: Int = 0
     var accountId: String = ""
     var money: BigDecimal = BigDecimal.ZERO
     var operationType: OperationType = OperationType.BLANK

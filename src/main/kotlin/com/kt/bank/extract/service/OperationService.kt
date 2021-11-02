@@ -41,21 +41,24 @@ class OperationService(private val operationRepository: OperationRepository,
     }
 
     fun deposit(extract: Extract): ResponseEntity<Operation> {
-        val extract1 = extractRepository.findById(extract.accountId).orElse(null)
-        val deposit = newOperation(extract1.accountId, OperationType.DEPOSIT, extract.money)
+        var extract1 = extractRepository.findById(extract.accountId).orElse(null)
+        var deposit = newOperation(extract1.accountId, OperationType.DEPOSIT, extract.money)
         if(extract1 == null){
             deposit.message = "Usuário não encontrado, crie o usuário no endpoint /new-extract com primeiro depósito"
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(deposit)
         }
-        extract1.money = extract.money + extract.money
+        extract1.money = extract1.money + extract.money
         extractRepository.save(extract1)
-        deposit.message = "Deposito solicitado com sucesso"
+        deposit.message = "Depósito solicitado com sucesso"
+        deposit.operationType = OperationType.DEPOSIT
+        deposit.operationStatus = OperationStatus.PENDING
+        deposit.accountId = extract.accountId
         operationRepository.save(deposit)
         return ResponseEntity.status(HttpStatus.OK).body(deposit)
     }
 
     fun withdraw(extractRequest: Extract): ResponseEntity<Operation> {
-        val withdraw = newOperation(extractRequest.accountId, OperationType.WITHDRAW, extractRequest.money)
+        var withdraw = newOperation(extractRequest.accountId, OperationType.WITHDRAW, extractRequest.money)
         var extract = extractRepository.findById(extractRequest.accountId).orElse(null)
         if (extract == null){
             withdraw.message = "Usuário não encontrado"
@@ -67,17 +70,20 @@ class OperationService(private val operationRepository: OperationRepository,
             extract.money = extract.money - extractRequest.money
         extractRepository.save(extract)
         withdraw.message = "saque solicitado com sucesso"
+        withdraw.operationStatus = OperationStatus.PENDING
+        withdraw.accountId = extract.accountId
+        withdraw.operationType = OperationType.WITHDRAW
         operationRepository.save(withdraw)
         return ResponseEntity.status(HttpStatus.OK).body(withdraw)
     }
 
-    fun confirmTransaction(operationId: String): ResponseEntity<String> {
+    fun confirmTransaction(operationId: Int): ResponseEntity<String> {
         var operation = operationRepository.findById(operationId).orElse(null)
 
         if(operation == null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Operação não encontrada")
         }
-        else if (operation.date.plusMinutes(6).isAfter(LocalDateTime.now())) {
+        else if (operation.date.plusMinutes(6).isBefore(LocalDateTime.now())) {
             var extract = rollbackOperation(operation)
             extractRepository.save(extract)
             operationRepository.deleteById(operationId)
@@ -86,7 +92,7 @@ class OperationService(private val operationRepository: OperationRepository,
         var operationHistory = operationToOperationHistory(operation)
         operationHistoryRepository.save(operationHistory)
         operationRepository.deleteById(operationId)
-        return ResponseEntity.status(HttpStatus.OK).body("Transação de id: ${operation.id} confirmada}")
+        return ResponseEntity.status(HttpStatus.OK).body("Transação de id: ${operation.id} confirmada")
     }
 
     private fun rollbackOperation(operation: Operation) : Extract {
@@ -105,7 +111,7 @@ class OperationService(private val operationRepository: OperationRepository,
         operationHistory.accountId = operation.accountId
         operationHistory.money = operation.money
         operationHistory.operationType = operation.operationType
-        operationHistory.operationStatus = operation.operationStatus
+        operationHistory.operationStatus = OperationStatus.OK
         operationHistory.date = operation.date
         operationHistory.message = operation.message
         operationHistory.confirmationDate = LocalDateTime.now()

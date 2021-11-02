@@ -10,7 +10,7 @@ class Operation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: String = ""
+    var id: Int = 0
     var accountId: String = ""
     var money: BigDecimal = BigDecimal.ZERO
     var operationType: OperationType = OperationType.BLANK
