@@ -4,10 +4,11 @@ import java.math.BigDecimal
 import java.time.LocalDateTime
 import javax.persistence.Entity
 import javax.persistence.Id
+import javax.persistence.Table
 
 @Entity
+@Table
 class OperationHistory {
-
     @Id
     var operationId: String = ""
     var accountId: String = ""

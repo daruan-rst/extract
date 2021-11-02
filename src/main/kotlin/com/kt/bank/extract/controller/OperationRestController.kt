@@ -14,8 +14,6 @@ class OperationRestController (private val operationService: OperationService) {
 
     @PostMapping("/deposit")
     fun deposit(accountId: String, money: BigDecimal, uriComponentsBuilder : UriComponentsBuilder): ResponseEntity<Operation> {
-//        var uri = uriComponentsBuilder.path("/operation/{id}")
-//            .buildAndExpand(operation.id).toUri()
         return operationService.deposit(accountId, money)
     }
 

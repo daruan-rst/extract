@@ -101,7 +101,7 @@ class OperationService(private val operationRepository: OperationRepository,
     }
 
     fun operationToOperationHistory(operation: Operation): OperationHistory{
-        var operationHistory = OperationHistory()
+        val operationHistory = OperationHistory()
         operationHistory.operationId = operation.id
         operationHistory.accountId = operation.accountId
         operationHistory.money = operation.money

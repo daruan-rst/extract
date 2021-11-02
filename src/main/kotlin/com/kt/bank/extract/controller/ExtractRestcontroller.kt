@@ -19,8 +19,8 @@ class ExtractRestcontroller(val accountClient : AccountClient, val extractServic
 
 
     @GetMapping
-    fun extract(accountId :String ) : ResponseEntity<Extract> {
-        return extractService.findExtractById(accountId)
+    fun extract(accountId :String ) : ResponseEntity<Extract> = run {
+         extractService.findExtractById(accountId)
     }
 
     @PostMapping("/new-extract")
