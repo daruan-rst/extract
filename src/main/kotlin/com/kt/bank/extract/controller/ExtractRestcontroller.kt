@@ -5,10 +5,7 @@ import com.kt.bank.extract.domain.Extract
 import com.kt.bank.extract.domain.OperationHistory
 import com.kt.bank.extract.service.ExtractService
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import java.math.BigDecimal
 import java.time.Duration
@@ -19,16 +16,16 @@ class ExtractRestcontroller(val accountClient : AccountClient, val extractServic
 
 
     @GetMapping
-    fun extract(accountId :String ) : ResponseEntity<Extract> = run {
+    fun extract(@RequestBody accountId :String ) : ResponseEntity<Extract> = run {
          extractService.findExtractById(accountId)
     }
 
     @PostMapping("/new-extract")
-    fun createExtract(accountId: String , money : BigDecimal) : ResponseEntity<Extract>{
-        return extractService.newExtract(accountId, money)}
+    fun createExtract(@RequestBody extract: Extract) : ResponseEntity<Extract>{
+        return extractService.newExtract(extract)}
 
     @GetMapping("/extractHistory")
-    fun extractHistory(accountId: String) :ResponseEntity<List<OperationHistory>>{
+    fun extractHistory(@RequestBody accountId: String) :ResponseEntity<List<OperationHistory>>{
         return extractService.findExtractHistoryByAccountId(accountId)
     }
 }

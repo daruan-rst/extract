@@ -50,12 +50,12 @@ class ExtractService(val extractRepository : ExtractRepository, val accountClien
         }
         return box }
 
-        fun newExtract (accountId: String , money:BigDecimal): ResponseEntity<Extract> {
-            val extract = Extract(accountId, money)
-            if(extractRepository.findById(accountId).isPresent){
+        fun newExtract (extract: Extract): ResponseEntity<Extract> {
+            if(extractRepository.findById(extract.accountId).isPresent){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null)
                 }
             extractRepository.save(extract)
+            //TODO criar um deposito pendente?
             return ResponseEntity.status(HttpStatus.CREATED).body(extract)
             }
 

@@ -40,32 +40,31 @@ class OperationService(private val operationRepository: OperationRepository,
         }
     }
 
-    fun deposit(accountId: String, depositMoney: BigDecimal): ResponseEntity<Operation> {
-        var extract = extractRepository.findById(accountId).orElse(null)
-        val deposit = newOperation(accountId, OperationType.DEPOSIT, depositMoney)
-        if(extract == null){
+    fun deposit(extract: Extract): ResponseEntity<Operation> {
+        val extract1 = extractRepository.findById(extract.accountId).orElse(null)
+        val deposit = newOperation(extract1.accountId, OperationType.DEPOSIT, extract.money)
+        if(extract1 == null){
             deposit.message = "Usuário não encontrado, crie o usuário no endpoint /new-extract com primeiro depósito"
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(deposit)
         }
-        extract.money = extract.money + depositMoney
-        extractRepository.save(extract)
+        extract1.money = extract.money + extract.money
+        extractRepository.save(extract1)
         deposit.message = "Deposito solicitado com sucesso"
         operationRepository.save(deposit)
         return ResponseEntity.status(HttpStatus.OK).body(deposit)
     }
 
-    fun withdraw(accountId: String, withdrawMoney: BigDecimal): ResponseEntity<Operation> {
-        var withdrawMoney = withdrawMoney.negate()
-        val withdraw = newOperation(accountId, OperationType.WITHDRAW, withdrawMoney)
-        var extract = extractRepository.findById(accountId).orElse(null)
+    fun withdraw(extractRequest: Extract): ResponseEntity<Operation> {
+        val withdraw = newOperation(extractRequest.accountId, OperationType.WITHDRAW, extractRequest.money)
+        var extract = extractRepository.findById(extractRequest.accountId).orElse(null)
         if (extract == null){
             withdraw.message = "Usuário não encontrado"
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(withdraw)
-        } else if (withdrawMoney > extract.money){
+        } else if (extractRequest.money > extract.money){
             withdraw.message = "Saldo insuficiente para saque"
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(withdraw)
         }
-            extract.money = extract.money - withdrawMoney
+            extract.money = extract.money - extractRequest.money
         extractRepository.save(extract)
         withdraw.message = "saque solicitado com sucesso"
         operationRepository.save(withdraw)
